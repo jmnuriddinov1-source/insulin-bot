@@ -887,14 +887,8 @@ def build_app() -> Application:
     return application
 
 
-if __name__ == "__main__":
-    init_db()
-    app = build_app()
-    print("Bot started")
-    app.run_polling(close_loop=False)
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
-import os
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -902,9 +896,20 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b"Bot is running")
 
+    def log_message(self, format, *args):
+        return
+
 def run_web():
     port = int(os.environ.get("PORT", 10000))
     server = HTTPServer(("0.0.0.0", port), Handler)
     server.serve_forever()
 
-threading.Thread(target=run_web).start()
+if __name__ == "__main__":
+    init_db()
+
+    # маленький HTTP-сервер для Render Web Service
+    threading.Thread(target=run_web, daemon=True).start()
+
+    app = build_app()
+    print("Bot started")
+    app.run_polling()
