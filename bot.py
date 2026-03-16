@@ -907,9 +907,12 @@ def run_web():
 if __name__ == "__main__":
     init_db()
 
-    # маленький HTTP-сервер для Render Web Service
+    # Запуск маленького HTTP-сервера для Render
     threading.Thread(target=run_web, daemon=True).start()
 
+    # Создаём и запускаем бота
     app = build_app()
     print("Bot started")
+
+    # Запуск в polling режиме
     app.run_polling()
